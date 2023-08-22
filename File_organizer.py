@@ -41,10 +41,6 @@ def org_files():
     print(f"The file '{Fname}' was found {occurrences} times.")
     print(f"\033[1;31;40m{path}\033[m")
 
-
-
-
-
 def make_video():
     img_array = []
     for filename in glob.glob(f"{path}/*.tif"):
@@ -63,4 +59,3 @@ org_files()
 print("Files organized")
 
 make_video()
-

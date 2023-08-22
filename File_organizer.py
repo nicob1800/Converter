@@ -3,6 +3,7 @@ import os
 import cv2
 import numpy as np
 import glob
+from PIL import Image
 
 Fpath = input("Path to Folders: ")
 Fname = input("File name: ")
@@ -24,6 +25,7 @@ def org_files():
             i = occurrences
             parts = root.split("_")
             suffix = parts[-1]
+            #lastdigits = root % 10
             source_path = os.path.join(root, Fname)
             destination_path = os.path.join(path, f"{Nname}_{suffix}.tif")
             
@@ -38,34 +40,27 @@ def org_files():
     # Print the total number of occurrences
     print(f"The file '{Fname}' was found {occurrences} times.")
     print(f"\033[1;31;40m{path}\033[m")
-    pass
 
-org_files()
-print("org files done")
+
+
+
 
 def make_video():
-    print("make video started")
-    output_file = "video.mp4"
-    tiff_files = [f for f in os.listdir(path) if f.endswith('.tif')]
-    tiff_files.sort()
+    img_array = []
+    for filename in glob.glob(f"{path}/*.tif"):
+        img = cv2.imread(filename)
+        height, width, layers = img.shape
+        size = (width,height)
+        img_array.append(img)
 
-    first_frame = cv2.imread(os.path.join(path, tiff_files[0]))
-    height, width, layers = first_frame.shape
-    fps = 2
+    out = cv2.VideoWriter('project1.mp4',cv2.VideoWriter_fourcc(*'mp4v'), 2, size)
+ 
+    for i in range(len(img_array)):
+        out.write(img_array[i])
+        out.release()
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_writer = cv2.VideoWriter(output_file, fourcc, fps, (width, height))
+org_files()
+print("Files organized")
 
-    print("one part done")
-    for tiff_file in tiff_files:
-        tiff_path = os.path.join(path, tiff_file)
-        frame = cv2.imread(tiff_path)
-        video_writer.write(frame)
-    print("done successfully")
-
-    video_writer.release()
-
-
-print("starting")
 make_video()
 

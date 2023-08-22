@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['File_Organizer.py'],
+    ['file_organizer.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -28,7 +28,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='File_Organizer',
+    name='file_organizer',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

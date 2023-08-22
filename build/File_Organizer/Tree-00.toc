@@ -1,0 +1,5 @@
+('c:\\users\\nicol\\appdata\\local\\programs\\python\\python311\\lib\\site-packages\\pillow-9.5.0-py3.11-win-amd64.egg',
+ None,
+ {'EGG-INFO', '*.py', '*.pyw', '*.pyd', '*.pyc', '*.cp311-win_amd64.pyd'},
+ 'DATA',
+ [])

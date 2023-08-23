@@ -13,6 +13,8 @@ Nname = input("New name: ")
 def org_files():
     global path
     global destination_path
+    global suffix
+    
     # Create the destination folder if it doesn't exist
     path = os.path.join(Fpath, Dfolder)
     os.makedirs(path, exist_ok=True)
@@ -41,7 +43,11 @@ def org_files():
     print(f"The file '{Fname}' was found {occurrences} times.")
     print(f"\033[1;31;40m{path}\033[m")
 
+
 def make_video():
+    global path
+    videopath = input("Path to the video frames: ") #comment out later
+    name = input("Name of the video: ")
     img_array = []
     for filename in glob.glob(f"{path}/*.tif"):
         img = cv2.imread(filename)
@@ -49,11 +55,13 @@ def make_video():
         size = (width,height)
         img_array.append(img)
 
-    out = cv2.VideoWriter('project1.mp4',cv2.VideoWriter_fourcc(*'mp4v'), 2, size)
+    out = cv2.VideoWriter(f"{name}.mp4",cv2.VideoWriter_fourcc(*'mp4v'), 2, size)
  
     for i in range(len(img_array)):
         out.write(img_array[i])
-        out.release()
+    
+    out.release()
+    print(f"\033[1;31;40m{out}\033[m")
 
 org_files()
 print("Files organized")

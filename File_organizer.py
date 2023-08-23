@@ -13,6 +13,8 @@ Nname = input("New name: ")
 def org_files():
     global path
     global destination_path
+    global suffix
+    
     # Create the destination folder if it doesn't exist
     path = os.path.join(Fpath, Dfolder)
     os.makedirs(path, exist_ok=True)
@@ -42,9 +44,6 @@ def org_files():
     print(f"\033[1;31;40m{path}\033[m")
 
 
-
-
-
 def make_video():
     img_array = []
     for filename in glob.glob(f"{path}/*.tif"):
@@ -61,6 +60,7 @@ def make_video():
 
 org_files()
 print("Files organized")
+
 
 make_video()
 

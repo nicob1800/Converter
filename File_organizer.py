@@ -67,4 +67,3 @@ org_files()
 print("Files organized")
 
 make_video()
-

@@ -9,7 +9,7 @@ Fpath = input("Path to Folders: ")
 Fname = input("File name: ")
 Dfolder = input("New folder name: ")
 Nname = input("New name: ")
-format = input("Format: ")
+
 
 def org_files():
     global path
@@ -52,7 +52,7 @@ def make_video():
     img_array = []
     
     # Get the list of image files
-    image_files = glob.glob(f"{videopath}/*.{format}")
+    image_files = glob.glob(f"{videopath}/*.jpg")
     print(image_files)  # Print the list to debug
     
     if not image_files:
@@ -78,7 +78,12 @@ def make_video():
 
 org_files()
 print("Files organized")
+imageJ = input("Path to imageJ: ")
 
-os.startfile("C:\\Users\\Nicol\\Downloads\\ij153-win-java8\\ImageJ\\ImageJ.exe")
+os.startfile(imageJ)
+videoLocation = input("Path to video: ")
+
+os.chdir(videoLocation)
 
 make_video()
+print("Video created")

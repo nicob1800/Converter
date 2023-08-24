@@ -9,6 +9,7 @@ Fpath = input("Path to Folders: ")
 Fname = input("File name: ")
 Dfolder = input("New folder name: ")
 Nname = input("New name: ")
+format = input("Format: ")
 
 def org_files():
     global path
@@ -46,16 +47,28 @@ def org_files():
 
 def make_video():
     global path
-    videopath = input("Path to the video frames: ") #comment out later
+    videopath = input("Path to the video frames: ")
     name = input("Name of the video: ")
     img_array = []
-    for filename in glob.glob(f"{path}/*.tif"):
+    
+    # Get the list of image files
+    image_files = glob.glob(f"{videopath}/*.{format}")
+    print(image_files)  # Print the list to debug
+    
+    if not image_files:
+        print("No image files found matching the specified pattern.")
+        return
+    
+    # Calculate the size based on the first image in the list
+    first_image = cv2.imread(image_files[0])
+    height, width, layers = first_image.shape
+    size = (width, height)
+    
+    for filename in image_files:
         img = cv2.imread(filename)
-        height, width, layers = img.shape
-        size = (width,height)
         img_array.append(img)
 
-    out = cv2.VideoWriter(f"{name}.mp4",cv2.VideoWriter_fourcc(*'mp4v'), 2, size)
+    out = cv2.VideoWriter(f"{name}.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 2, size)
  
     for i in range(len(img_array)):
         out.write(img_array[i])
@@ -65,5 +78,7 @@ def make_video():
 
 org_files()
 print("Files organized")
+
+os.startfile("C:\\Users\\Nicol\\Downloads\\ij153-win-java8\\ImageJ\\ImageJ.exe")
 
 make_video()

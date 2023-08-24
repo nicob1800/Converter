@@ -68,7 +68,7 @@ def make_video():
         img = cv2.imread(filename)
         img_array.append(img)
 
-    out = cv2.VideoWriter(f"{name}.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 2, size)
+    out = cv2.VideoWriter(f"{name}.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
  
     for i in range(len(img_array)):
         out.write(img_array[i])
@@ -84,6 +84,8 @@ os.startfile(imageJ)
 videoLocation = input("Path to video: ")
 
 os.chdir(videoLocation)
+
+fps = input("Frames per second: ")
 
 make_video()
 print("Video created")

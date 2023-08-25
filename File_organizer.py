@@ -28,10 +28,16 @@ def org_files():
             i = occurrences
             parts = root.split("_")
             suffix = parts[-1]
+            print(suffix)
             #lastdigits = root % 10
             source_path = os.path.join(root, Fname)
+            if len(suffix) == 1:
+                suffix = f"0{suffix}"
+            print(suffix)
+
             destination_path = os.path.join(path, f"{Nname}_{suffix}.tif")
-            
+            print(destination_path)
+
             try:
                 shutil.copy(source_path, destination_path)
                 print(f"From {root}, file '{Fname}' copied to '{destination_path}'")
@@ -85,7 +91,8 @@ videoLocation = input("Path to video: ")
 
 os.chdir(videoLocation)
 
-fps = input("Frames per second: ")
+fps = float(input("Frames per second: "))
 
 make_video()
 print("Video created")
+input("Press Enter to exit...")

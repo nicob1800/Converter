@@ -10,53 +10,6 @@ from tkinter import ttk
 from tkinter.messagebox import showinfo
 import time
 
-
-def org_files():
-    global path
-    global destination_path
-    global suffix
-    global Dname
-
-    Fpath = Fpath.get()
-    Dfolder = Dfolder.get()
-    Fname = Fname.get()
-    Nname = Dname.get()
-    
-    # Create the destination folder if it doesn't exist
-    path = os.path.join(Fpath, Dfolder)
-    #os.makedirs(path, exist_ok=True)
-
-    # Find occurrences of the specified file name in directories
-    occurrences = 0
-    for root, dirs, files in os.walk(Fpath):
-        if Fname in files:
-            occurrences += 1
-            i = occurrences
-            parts = root.split("_")
-            suffix = parts[-1]
-            print(suffix)
-            #lastdigits = root % 10
-            source_path = os.path.join(root, Fname)
-            if len(suffix) == 1:
-                suffix = f"0{suffix}"
-            print(suffix)
-
-            destination_path = os.path.join(path, f"{Nname}_{suffix}.tif")
-            print(destination_path)
-
-            try:
-                shutil.copy(source_path, destination_path)
-                print(f"From {root}, file '{Fname}' copied to '{destination_path}'")
-            except shutil.SameFileError:
-                print("Same file error")
-            except FileNotFoundError:
-                print(f"File '{Fname}' not found in '{root}'")
-            
-    # Print the total number of occurrences
-    print(f"The file '{Fname}' was found {occurrences} times.")
-    print(f"\033[1;31;40m{path}\033[m")
-    print("Files organized")
-
 def makewindow():
     global main
     main = tk.Tk()
@@ -64,90 +17,88 @@ def makewindow():
     #main.mainloop()
 
 def organize():
-    def update_global_variable(value):
-        global selected_directory
-        selected_directory = value
-
     def browse_folder(entry_var):
-        global Fpath
         selected_folder = fd.askdirectory()
         entry_var.set(selected_folder)
-        update_global_variable(selected_folder)
-        Fpath = selected_folder
     
+    def org_files():
+        folder_path = Fpath.get()
+        file_name = Fname.get()
+        dest_folder_name = Dfolder.get()
+        dest_file_name = Dname.get()
+
+        path = os.path.join(folder_path, dest_folder_name)
+        os.makedirs(path, exist_ok=True)
+
+        occurrences = 0
+        for root, dirs, files in os.walk(folder_path):
+            if file_name in files:
+                occurrences += 1
+                parts = root.split("_")
+                suffix = parts[-1]
+                source_path = os.path.join(root, file_name)
+                if len(suffix) == 1:
+                    suffix = f"0{suffix}"
+                destination_path = os.path.join(path, f"{dest_file_name}_{suffix}.tif")
+
+                try:
+                    shutil.copy(source_path, destination_path)
+                    print(f"From {root}, file '{file_name}' copied to '{destination_path}'")
+                except shutil.SameFileError:
+                    print("Same file error")
+                except FileNotFoundError:
+                    print(f"File '{file_name}' not found in '{root}'")
+
+        print(f"The file '{file_name}' was found {occurrences} times.")
+        print(f"\033[1;31;40m{path}\033[m")
+        print("Files organized")
+
+    global Fpath
     global Fname
     global Dfolder
     global Dname
-    Dfolder = tk.StringVar()
-    Fname = tk.StringVar()
-    Dname = tk.StringVar()
+    
     Fpath = tk.StringVar()
-    def orgframe():
-        global folder_path
-        global path
-        global destination_path
-        global suffix
+    Fname = tk.StringVar()
+    Dfolder = tk.StringVar()
+    Dname = tk.StringVar()
 
-        Fpath.set("")
-        Dfolder.set("")
-        Dname.set("")
+    main_frame = tk.Frame(main, width=300, height=300, relief=tk.SUNKEN, bg='grey', borderwidth=10)
+    main_frame.place(relx=0, rely=0.04, relwidth=0.6, relheight=0.35)
+    
+    tk.Label(main, text="Organize Files", relief=tk.SUNKEN, bg="grey", borderwidth=5).place(relx=0.025, rely=0.0)
+    tk.Label(main_frame, text="Select folder with folders").place(relx=0.025, rely=0.025)
+    
+    folder_path_entry = tk.Entry(main_frame, textvariable=Fpath)
+    folder_path_entry.place(relx=0.025, rely=0.125, relwidth=0.5)
+    tk.Button(main_frame, text="Browse Folder", command=lambda: browse_folder(Fpath), fg='blue').place(relx=0.025, rely=0.225)
+    
+    tk.Label(main_frame, text="File Name with extension:").place(relx=0.025, rely=0.35)
+    file_name_entry = tk.Entry(main_frame, textvariable=Fname)
+    file_name_entry.place(relx=0.025, rely=0.45, relwidth=0.5)
+    
+    def createdir():
+        os.makedirs(f"{Fpath.get()}/{Dfolder.get()}", exist_ok=True)
+        ss = Message(main_frame, text=f"Folder successfully created at {Fpath.get()}/{Dfolder.get()}")
+        ss.place(relx=0.6, rely=0.75)
+        main_frame.after(3000, ss.destroy)
 
-
-        folder_path = Fpath.get()  # Get the value from the StringVar Fpath
-        frame = tk.Frame(main, width=300, height=300, relief=tk.SUNKEN, bg='grey', borderwidth=10)
-        frame.place(relx=0, rely=0.04, relwidth=0.6, relheight=0.35)
-        # Create label
-        label = tk.Label(main, text="Organize Files", relief=tk.SUNKEN, bg="grey", borderwidth=5)
-        label.place(relx=0.025, rely=0.0)
-
-        labelf = tk.Label(frame, text="Select folder with folders")
-        labelf.place(relx=0.025, rely=0.025)
-
-        folder_path = tk.StringVar()
-
-        # Create Entries
-        folder_entry = tk.Entry(frame, textvariable=folder_path)
-        folder_entry.place(relx=0.025, rely=0.125, relwidth=0.5)
-
-        # Create buttons
-        folderpath = tk.Button(frame, text="Browse Folder", command=lambda: browse_folder(folder_path), fg='blue')
-        folderpath.place(relx=0.025, rely=0.225)
-
-        # File Name
-        namelabel = tk.Label(frame, text="File Name with extension:")
-        namelabel.place(relx=0.025, rely=0.35)
-        name = tk.Entry(frame, textvariable=Fname)
-        name.insert(0, Fname.get())  # Set the initial value using .insert()
-        name.place(relx=0.025, rely=0.45, relwidth=0.5)
-        Fname.set("")
-
-        # Destination Folder 
-        dlabel = tk.Label(frame, text="Destination Folder name:")
-        dlabel.place(relx=0.025, rely=0.55)
-        destin = tk.Entry(frame, textvariable=Dfolder)
-        destin.insert(0, Dfolder.get())  # Set the initial value using .insert()
-        destin.place(relx=0.025, rely=0.65, relwidth=0.5)
-        Dfolder.set("")
-
-        # Destination file
-        dnamelabel = tk.Label(frame, text="Destination File name:")
-        dnamelabel.place(relx=0.025, rely=0.75)
-        dname = tk.Entry(frame, textvariable=Dname)
-        dname.insert(0, Dname.get())  # Set the initial value using .insert()
-        dname.place(relx=0.025, rely=0.85, relwidth=0.5)
-        Dname.set("")
-
-        # Create Organize button
-        organizer = tk.Button(frame, text="Organize Files", command=lambda: org_files)
-        organizer.place(relx=0.6, rely=0.85, relwidth=0.3)
+    tk.Label(main_frame, text="Destination Folder name:").place(relx=0.025, rely=0.55)
+    dest_folder_entry = tk.Entry(main_frame, textvariable=Dfolder)
+    dest_folder_entry.place(relx=0.025, rely=0.65, relwidth=0.5)
+    tk.Button(main_frame, text="Create Folder", command=lambda: createdir()).place(relx=0.6, rely=0.65, relwidth=0.3)
 
 
-    orgframe()
+    tk.Label(main_frame, text="Destination File name:").place(relx=0.025, rely=0.75)
+    dest_file_entry = tk.Entry(main_frame, textvariable=Dname)
+    dest_file_entry.place(relx=0.025, rely=0.85, relwidth=0.5)
+    
+    tk.Button(main_frame, text="Organize Files", command=org_files).place(relx=0.6, rely=0.85, relwidth=0.3)
 
 def openij():
     #frame
     frame = tk.Frame(main, width=300, height=300, relief=tk.SUNKEN, bg='grey', borderwidth=10)
-    frame.place(relx=0, rely=0.375, relwidth=0.6, relheight=0.15)
+    frame.place(relx=0, rely=0.4, relwidth=0.6, relheight=0.15)
     ijlabel = tk.Label(frame, text="Open ImageJ", relief=tk.SUNKEN, bg="grey", borderwidth=5)
     ijlabel.place(relx=0.025, rely=0.025)
 
@@ -167,6 +118,74 @@ def openij():
     ijbrowse.place(relx=0.025, rely=0.5)
     ijopen = tk.Button(frame, text="Open ImageJ", command=lambda: os.startfile(imagej.get()))
     ijopen.place(relx=0.6, rely=0.25, relwidth=0.3)
+    
+
+def video_maker():
+    def make_video(name, fps, videopath):
+        global path
+        img_array = []
+        
+        # Get the list of image files
+        image_files = glob.glob(f"{videopath}/*.jpg")
+        print(image_files)  # Print the list to debug
+        
+        if not image_files:
+            print("No image files found matching the specified pattern.")
+            return
+        
+        # Calculate the size based on the first image in the list
+        first_image = cv2.imread(image_files[0])
+        height, width, layers = first_image.shape
+        size = (width, height)
+        
+        for filename in image_files:
+            img = cv2.imread(filename)
+            img_array.append(img)
+
+        out = cv2.VideoWriter(f"{name}.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
+    
+        for i in range(len(img_array)):
+            out.write(img_array[i])
+        
+        out.release()
+        print(f"\033[1;31;40m{out}\033[m")
+    global videopath
+    global name
+    global fps
+    fps = tk.StringVar()
+    name = tk.StringVar()
+    videopath = tk.StringVar()
+
+    main_frame = tk.Frame(main, width=300, height=300, relief=tk.SUNKEN, bg='grey', borderwidth=10)
+    main_frame.place(relx=0, rely=0.56, relwidth=0.6, relheight=0.15)
+
+    fps_var = tk.StringVar()
+    name_var = tk.StringVar()
+    videopath_var = tk.StringVar()
+
+    fps_input = tk.Entry(main_frame, textvariable=fps_var)
+    fps_input.place(relx=0.025, rely=0.025)
+
+    def browse_folder(entry_var):
+        selected_folder = fd.askdirectory()
+        entry_var.set(selected_folder)
+
+    videopath_entry = tk.Entry(main_frame, textvariable=videopath_var, width=10)
+    videopath_entry.place(relx=0.025, rely=0.25, relwidth=0.5)
+    tk.Entry(main_frame, textvariable=name_var, width=10).place(relx=0.025, rely=0.5, relwidth=0.4)
+    
+    def create():
+        video_name = name_var.get()
+        fps_value = float(fps_var.get())
+        videopath = videopath_var.get()
+        os.chdir(videopath)
+        make_video(video_name, fps_value, videopath)
+    
+    framesinpath_button = tk.Button(main_frame, text="Set Frames", command=lambda: browse_folder(videopath_var))
+    framesinpath_button.place(relx=0.6, rely=0.25, relwidth=0.3)
+    
+    tk.Button(main_frame, text="Make Video", command=create).place(relx=0.025, rely=0.7, relwidth=0.3)
+
 
 Fpath = ""
 Fname = ""
@@ -177,54 +196,14 @@ ijentry = ""
 makewindow()
 organize()
 openij()
+video_maker()
 main.mainloop()
-print(Fpath)
-print(Fname.get())
-print(Dfolder.get())
-print(Dname.get())
+print(fps)
+print(name)
+print(videopath)
 
-Fpath = Fpath.replace("/", "\\")
-Fname = Fname.get()
-Dfolder = Dfolder.get()
-Dname = Dname.get()
 
-videoLocation = input("Path to video: ")
-fps = float(input("Frames per second: "))
 
-os.chdir(videoLocation)
-
-def make_video():
-    global path
-    videopath = input("Path to the video frames: ")
-    name = input("Name of the video: ")
-    img_array = []
-    
-    # Get the list of image files
-    image_files = glob.glob(f"{videopath}/*.jpg")
-    print(image_files)  # Print the list to debug
-    
-    if not image_files:
-        print("No image files found matching the specified pattern.")
-        return
-    
-    # Calculate the size based on the first image in the list
-    first_image = cv2.imread(image_files[0])
-    height, width, layers = first_image.shape
-    size = (width, height)
-    
-    for filename in image_files:
-        img = cv2.imread(filename)
-        img_array.append(img)
-
-    out = cv2.VideoWriter(f"{name}.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
- 
-    for i in range(len(img_array)):
-        out.write(img_array[i])
-    
-    out.release()
-    print(f"\033[1;31;40m{out}\033[m")
-
-make_video()
 print("Video created")
 input("Press Enter to exit...")
 

@@ -127,9 +127,6 @@ Dname = Dname.get()
 
 
 
-imageJ = input("Path to imageJ: ")
-os.startfile(imageJ)
-
 videoLocation = input("Path to video: ")
 fps = float(input("Frames per second: "))
 

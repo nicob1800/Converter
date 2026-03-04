@@ -5,6 +5,8 @@ Files were not organized by tray, but by timestamp. Had to scrape the folders fo
 Instead of just using cmd prompt for this project, I chose to make a UI with tkinter to start learning to use a new library.
 MUCH room for improvement
 
+Says copilot contribution: Only used this to organize the repo. All coding done by Nicolas Benavides.
+
 # Converter
 Converting .tif to .mp4
 Must have imageJ installed
